@@ -1,0 +1,51 @@
+---
+title: "Final Covid Project"
+author: "K. Horikawa"
+date: "2024-08-16"
+output: html_document
+---
+## Part 1 Setup
+### Loading Library
+```{r , echo=TRUE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+```
+### Reading in Data Set
+```{r , echo=TRUE}
+#data frame for Japan
+japan_cases <- ("https://covid19.mhlw.go.jp/public/opendata/newly_confirmed_cases_daily.csv")
+df_japan <- read.csv(japan_cases)
+#data for France
+uk_cases<- ("https://ukhsa-dashboard.data.gov.uk/topics/covid-19#download-genomic-lineages") 
+df_uk<- read.csv(uk_cases)
+```
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, echo=TRUE}
+# Convert `Date` to date format
+df_japan $Date <- ymd(df$Date)
+# Filter data from 2020-01-01 onwards
+df_filtered <- df_japan %>% filter(Date >= '2020-01-01')
+
+# Resample to monthly intervals and sum cases
+df_monthly <- df_filtered %>%
+  group_by(Month = floor_date(Date, 'month')) %>%
+  summarise(New_Cases = sum(ALL))
+
+# Create line plot
+ggplot(df_monthly, aes(x = Month, y = New_Cases)) +
+  geom_line() +
+  labs(title = "New Cases in Japan Per Month",
+       x = "Month",
+       y = "New Cases")
+
+
+
+```
+
